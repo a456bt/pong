@@ -6,7 +6,7 @@ public class PlayerController : MonoBehaviour
 {
     private enum ScreenEdge { Left, Right }
     
-    [SerializeField] private PlayerNumber number;
+    [SerializeField] public PlayerNumber number;
     private ScreenEdge edge;
     private int prevScreenWidth;
     private int prevScreenHeight;
@@ -30,7 +30,7 @@ public class PlayerController : MonoBehaviour
         HandleMovement();
     }
 
-    void MoveToEdge()
+    public void MoveToEdge()
     {
         if (Camera.main == null)
         {
@@ -96,11 +96,5 @@ public class PlayerController : MonoBehaviour
 
         newPosition.y = Mathf.Clamp(newPosition.y, minY, maxY);
         transform.position = newPosition;
-    }
-
-    public void SetPlayerNumber(PlayerNumber num)
-    {
-        number = num;
-        MoveToEdge();
     }
 }

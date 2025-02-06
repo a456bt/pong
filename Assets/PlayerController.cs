@@ -13,6 +13,7 @@ public class PlayerController : MonoBehaviour
     private float xScale;
     private float yScale;
     private float speed = 5f;
+    public bool IsMoving = false;
 
     void Start()
     {
@@ -78,13 +79,15 @@ public class PlayerController : MonoBehaviour
         float moveDirection = 0;
         if (number == PlayerNumber.One)
         {
-            if (Input.GetKey(KeyCode.W)) moveDirection = 1;
-            else if (Input.GetKey(KeyCode.S)) moveDirection = -1;
+            if (Input.GetKey(KeyCode.W)) { moveDirection = 1; IsMoving = true; }
+            else if (Input.GetKey(KeyCode.S)) { moveDirection = -1; IsMoving = true; }
+            else IsMoving = false;
         }
         else if (number == PlayerNumber.Two)
         {
-            if (Input.GetKey(KeyCode.UpArrow)) moveDirection = 1;
-            else if (Input.GetKey(KeyCode.DownArrow)) moveDirection = -1;
+            if (Input.GetKey(KeyCode.UpArrow)) { moveDirection = 1; IsMoving = true; }
+            else if (Input.GetKey(KeyCode.DownArrow)) { moveDirection = -1; IsMoving = true; }
+            else IsMoving = false;
         }
 
         Vector3 newPosition = transform.position + new Vector3(0, moveDirection * speed * Time.deltaTime, 0);

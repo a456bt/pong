@@ -1,55 +1,81 @@
 using UnityEngine;
+
 public class GameController : MonoBehaviour
 {
-    public GameObject playerPrefab; // Assign this in the Inspector
+    public GameObject playerPrefab;
     public GameObject ballPrefab;
+    public GameObject serveBanner;
     
+    private BallController ballScript;
+    private bool gameStarted = false;
+    private int playerOneScore = 0;
+    private int playerTwoScore = 0;
+
     void Start()
     {
         SpawnPlayers();
         SpawnBall();
     }
 
+    void Update()
+    {
+        if (!gameStarted)
+        {
+            if (Input.GetKeyDown(KeyCode.LeftArrow))
+            {
+                StartGame(Vector2.left);
+            }
+            else if (Input.GetKeyDown(KeyCode.RightArrow))
+            {
+                StartGame(Vector2.right);
+            }
+        }
+    }
+
     void SpawnPlayers()
     {
-        if (playerPrefab == null)
-        {
-            Debug.LogError("Player prefab is not assigned!");
-            return;
-        }
-
         GameObject playerOne = Instantiate(playerPrefab, Vector3.zero, Quaternion.identity);
         GameObject playerTwo = Instantiate(playerPrefab, Vector3.zero, Quaternion.identity);
 
         PlayerController playerOneScript = playerOne.GetComponent<PlayerController>();
         PlayerController playerTwoScript = playerTwo.GetComponent<PlayerController>();
 
-        if (playerOneScript != null && playerTwoScript != null)
+        playerOneScript.number = PlayerNumber.One;
+        playerTwoScript.number = PlayerNumber.Two;
+        playerOneScript.MoveToEdge();
+        playerTwoScript.MoveToEdge();
+    }
+
+    void SpawnBall()
+    {
+        GameObject ball = Instantiate(ballPrefab, Vector3.zero, Quaternion.identity);
+        ballScript = ball.GetComponent<BallController>();
+    }
+
+    void StartGame(Vector2 direction)
+    {
+        if (ballScript != null)
         {
-            playerOneScript.number = PlayerNumber.One;
-            playerTwoScript.number = PlayerNumber.Two;
-            playerOneScript.MoveToEdge();
-            playerTwoScript.MoveToEdge();
+            ballScript.SetDirection(direction);
+            ballScript.moving = true;
+            gameStarted = true;
+            if (serveBanner != null)
+            {
+                serveBanner.SetActive(false);
+            }
+        }
+    }
+
+    public void UpdateScore()
+    {
+        if (ballScript.transform.position.x < 0)
+        {
+            playerTwoScore++;
         }
         else
         {
-            Debug.LogError("Player script not found on prefab!");
+            playerOneScore++;
         }
-    }
-    void SpawnBall()
-    {
-        if (ballPrefab == null)
-        {
-            Debug.LogError("Ball prefab is not assigned!");
-            return;
-        }
-
-        GameObject ball = Instantiate(ballPrefab, Vector3.zero, Quaternion.identity);
-
-        BallController ballScript = ball.GetComponent<BallController>();
-
-        if (ballScript == null) Debug.LogError("Ball script not found on prefab!");
-
-        ballScript.moving = true;
+        Debug.Log("Score: Player 1 - " + playerOneScore + " | Player 2 - " + playerTwoScore);
     }
 }
